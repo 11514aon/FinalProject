@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title> Home </title>
+    <link rel="stylesheet" href="{{ url_for ('static', filename='/CSS/style.css') }}">
+    <!--font-->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: "Kanit", sans-serif;
+            background-color: #fdf4ff;
+        }
+
+        h1 {
+            font-size: 3rem;
+        }
+        h4{
+            font-size: 1.5rem;
+        }
+        pre {
+            font-family: "Kanit", sans-serif;
+            font-size: 1rem;
+        }
+
+
+        a {
+            text-decoration: none;
+            font-family: "Kanit", sans-serif;
+            color: #f9e9fd;
+        }
+
+        .ctm_footer {
+            background: linear-gradient(131deg, rgba(104, 49, 163, 1) 0%, rgba(197, 79, 231, 1) 100%);
+            text-align: center;
+            color: #ffffff;
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+        }
+
+        .ctm_line_block {
+            display: inline-block;
+        }
+
+        .ctm_right {
+            text-align: right;
+            margin-right: 2rem;
+            margin-bottom: 0rem;
+        }
+
+        .no_mt {
+            margin-top: 0rem;
+        }
+
+        .text_cen {
+            text-align: center;
+        }
+
+        .btn_all {
+            background: linear-gradient(0deg, rgba(192, 122, 244, 1) 0%, rgba(232, 150, 255, 1) 100%);
+            color: white;
+            width: auto;
+            padding: 0.5rem;
+            margin-bottom: 1rem;
+            border: none;
+            box-shadow: 2px 2px 1px rgb(176, 176, 176);
+            border-radius: 5px;
+        }
+
+        .bo {
+            border-style: dashed;
+            border-color: #9841c6;
+            border-radius: 1rem;
+            background-color: white;
+        }
+
+        .scroll_h {
+            width: 90%;
+            overflow-x: auto;
+            overflow-y: hidden;
+            white-space: nowrap;
+        }
+
+        .scroll_v {
+            height: 30rem;
+            overflow-x: hidden;
+            overflow-y: auto;
+            white-space: nowrap;
+        }
+        .re_box{
+            background-color: #f0e0f8; 
+            text-align: start;
+            color:black;
+            margin: 0rem 1.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 1rem;
+        }
+        .re_text{
+            margin-left: 1.5rem;
+        }
+
+    </style>
+
+
+
+</head>
+
+<body>
+
+    <!--header-->
+    <div class="text_cen">
+        <div class="ctm_line_block" style="width: 60%;">
+            <h1 class="ctm_right">
+                <span style="color:#c54fe7">BIL</span><span style="color:#9841c6">LS</span> <span style="color:#8039b5">
+                    DETEC</span><span style="color:#6831a3">TION</span>
+            </h1>
+            <p class="ctm_right no_mt" style="color: #f39f1d;">
+                <b>EASY TO CONVERT BILLS TO TEXT</b>
+            </p>
+            <img src="/static/img/Proces_all.png" alt="..." width="90%">
+        </div>
+
+
+        <div class="ctm_line_block" style="width: 30%;">
+            <img src="/static/img/BillImg.png" alt="..." width="75%">
+        </div>
+    </div>
+
+
+
+    <!--content---->
+    <div class="text_cen " style="margin-bottom: 2rem; margin-top: 2rem;">
+
+        <!--input-->
+        <div class="bo" style="width: 45%; float:left; margin-left: 3%; margin-right: 3%;  height: 30rem;">
+
+            <!--text ก่อนอัปโหลด-->
+            <div id="textToHide" style="margin-top: 3rem;"><br>
+                <img src="/static/img/upload_icon2.png" style="width: 10rem;" alt="...">
+                <p class="no_mt">อัปโหลดรูปภาพที่ปุ่ม "เลือกไฟล์"</p>
+            </div>
+
+            <!--form อัปโหลด-->
+            <div><br>
+                <form action="/upload" method="post" enctype="multipart/form-data">
+                    <input type="file" name="files[]" id="fileInput" onclick="hideText()" multiple>
+                    <br><br>
+                    <div id="imagePreview" class="scroll_h" style="margin-left: 4%;"></div>
+                    <br>
+                    <input type="submit" value="Upload" class="btn_all">
+                </form>
+            </div>
+        </div>
+
+
+        <!--แสดงผลลัพธ์-->
+        <div class="bo scroll_v clear " style="width: 45%; text-align: start;">
+            <!--หัวข้อเเสดงผลลัพธ์-->
+            {% if excel_filename %}
+            <h4 class="re_text">ผลลัพธ์การดึงข้อมูล</h4>
+            {% endif %}
+
+            <!-- Loop ผลลัพธ์-->
+            {% for index, text, tax_id,shop_name,tax_no,dateo,table in text_list %}
+            <p class="re_text"><b>ข้อความจากภาพที่ &nbsp; {{ index }}</b><p>
+            <div class="re_box">
+                <p>ชื่อร้านค้า : {{ shop_name }}</p>
+                <p>เลขประจำตัวผู้เสียภาษี : {{ tax_id }}</p>
+                <p>วันที่ : {{ dateo }}</p>
+                <p>หมายเลขใบกำกับภาษี: {{ tax_no }}</p>
+                <pre>สินค้าเเละบริการ:<br> {{ table }}</pre>
+            </div>
+            {% endfor %}
+
+
+            <!--ปุ่มโหลด excel-->
+            {% if excel_filename %}
+            <br>
+            <button class="btn_all re_text">
+                <a href="{{ url_for('download_excel', excel_filename=excel_filename) }}">
+                    ดาวน์โหลด Excel</a>
+            </button>
+            {% endif %}
+
+        </div>
+    </div>
+
+
+
+
+
+
+    <!--footer-->
+    <div class="ctm_footer">
+        COPYRIGHT @ 2024 BILLS DETECTION
+    </div>
+
+
+
+
+    <script>
+        document.getElementById('fileInput').addEventListener('change', function (event) {
+            var preview = document.getElementById('imagePreview');
+            preview.innerHTML = '';
+
+            for (var i = 0; i < event.target.files.length; i++) {
+                var img = document.createElement('img');
+                img.src = URL.createObjectURL(event.target.files[i]);
+                img.style.height = '20rem';
+                img.style.marginRight = '5px';
+                preview.appendChild(img);
+            }
+        });
+
+        function hideText() {
+            document.getElementById('textToHide').style.display = 'none';
+        }
+    </script>
+    </script>
+
+</body>
+
+</html>
